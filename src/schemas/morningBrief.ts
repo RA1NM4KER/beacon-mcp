@@ -1,0 +1,27 @@
+import { z } from "zod";
+
+export const MorningBriefInputSchema = z.object({
+  weatherLocation: z.string().optional(),
+  weatherDate: z.string().optional(),
+  weatherDays: z.number().int().positive().max(10).optional(),
+  weatherHour: z.number().int().min(0).max(23).optional(),
+  commuteFrom: z.string().optional(),
+  commuteTo: z.string().optional(),
+  commuteDepartureAt: z.string().optional(),
+  emailQuery: z.string().optional(),
+  emailLabel: z.string().optional(),
+  emailUnreadOnly: z.boolean().optional(),
+  emailMaxResults: z.number().int().positive().max(20).optional(),
+  calendarDate: z.string().optional(),
+  calendarDateFrom: z.string().optional(),
+  calendarDateTo: z.string().optional(),
+  calendarMaxResults: z.number().int().positive().max(50).optional(),
+  fineappPage: z.number().int().min(0).optional(),
+  fineappSize: z.number().int().positive().max(100).optional(),
+  fineappSuccess: z.boolean().optional(),
+  fineappActorEmail: z.string().optional(),
+  fineappAction: z.string().optional(),
+  fineappTargetEntityType: z.string().optional(),
+  fineappDateFrom: z.string().optional(),
+  fineappDateTo: z.string().optional(),
+});
