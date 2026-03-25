@@ -12,7 +12,9 @@ type EmailOptionsInput = {
   emailMaxResults?: number;
 };
 
-export function buildEmailFetchOptions(input: EmailOptionsInput): FetchEmailsOptions {
+export function buildEmailFetchOptions(
+  input: EmailOptionsInput,
+): FetchEmailsOptions {
   const maxResults =
     input.emailMaxResults ?? input.maxResults ?? DEFAULT_EMAIL_MAX_RESULTS;
   const query = input.emailQuery ?? input.query;
