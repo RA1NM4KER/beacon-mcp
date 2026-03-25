@@ -1,28 +1,23 @@
-import type { z } from "zod";
-
 import type { FetchEmailsOptions } from "../types/gmail.js";
-import type { EmailsInputSchema } from "../schemas/gmail.js";
-import type { MorningBriefInputSchema } from "../schemas/morningBrief.js";
-
-type EmailsToolInput = z.infer<typeof EmailsInputSchema>;
-type MorningBriefInput = z.infer<typeof MorningBriefInputSchema>;
 
 const DEFAULT_EMAIL_MAX_RESULTS = 5;
+type EmailOptionsInput = {
+  query?: string;
+  label?: string;
+  unreadOnly?: boolean;
+  maxResults?: number;
+  emailQuery?: string;
+  emailLabel?: string;
+  emailUnreadOnly?: boolean;
+  emailMaxResults?: number;
+};
 
-export function buildEmailFetchOptions(
-  input: EmailsToolInput | MorningBriefInput,
-): FetchEmailsOptions {
+export function buildEmailFetchOptions(input: EmailOptionsInput): FetchEmailsOptions {
   const maxResults =
-    "emailMaxResults" in input
-      ? (input.emailMaxResults ?? DEFAULT_EMAIL_MAX_RESULTS)
-      : (input.maxResults ?? DEFAULT_EMAIL_MAX_RESULTS);
-
-  const query = "emailQuery" in input ? input.emailQuery : input.query;
-  const label = "emailLabel" in input ? input.emailLabel : input.label;
-  const unreadOnly =
-    "emailUnreadOnly" in input
-      ? (input.emailUnreadOnly ?? true)
-      : (input.unreadOnly ?? true);
+    input.emailMaxResults ?? input.maxResults ?? DEFAULT_EMAIL_MAX_RESULTS;
+  const query = input.emailQuery ?? input.query;
+  const label = input.emailLabel ?? input.label;
+  const unreadOnly = input.emailUnreadOnly ?? input.unreadOnly ?? true;
 
   return {
     query,
