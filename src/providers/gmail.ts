@@ -1,6 +1,7 @@
 import type { EmailsOutput } from "../schemas/gmail.js";
 import type {
   FetchEmailsOptions,
+  GmailLabelResponse,
   GmailListResponse,
   GmailMessageResponse,
 } from "../types/gmail.js";
@@ -83,6 +84,32 @@ async function fetchCount(accessToken: string, query: string): Promise<number> {
   return data.resultSizeEstimate ?? 0;
 }
 
+async function fetchLabelUnreadCount(
+  accessToken: string,
+  labelId: string,
+): Promise<number> {
+  const url = new URL(
+    `https://gmail.googleapis.com/gmail/v1/users/me/labels/${labelId}`,
+  );
+
+  const response = await fetchGmail(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Gmail label request failed: ${response.status} ${errorText}`,
+    );
+  }
+
+  const data = (await response.json()) as GmailLabelResponse;
+  return data.messagesUnread ?? 0;
+}
+
 export async function fetchEmails(
   options: FetchEmailsOptions = {},
 ): Promise<EmailsOutput> {
@@ -119,12 +146,21 @@ export async function fetchEmails(
     ),
   );
   const [unreadCount, importantCount] = await Promise.all([
-    fetchCount(accessToken, "is:unread"),
-    fetchCount(accessToken, "is:unread label:important"),
+    fetchLabelUnreadCount(accessToken, "UNREAD"),
+    fetchLabelUnreadCount(accessToken, "IMPORTANT"),
   ]);
+  const estimatedCount = data.resultSizeEstimate ?? messages.length;
+  const count =
+    options.unreadOnly && !options.query && !options.label
+      ? unreadCount
+      : options.unreadOnly &&
+          !options.query &&
+          options.label?.toLowerCase() === "important"
+        ? importantCount
+        : estimatedCount;
 
   return {
-    count: data.resultSizeEstimate ?? messages.length,
+    count,
     query,
     unreadCount,
     importantCount,

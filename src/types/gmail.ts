@@ -25,3 +25,12 @@ export type GmailMessageResponse = {
     }>;
   };
 };
+
+export type GmailLabelResponse = {
+  id: string;
+  name: string;
+  messagesTotal?: number;
+  messagesUnread?: number;
+  threadsTotal?: number;
+  threadsUnread?: number;
+};

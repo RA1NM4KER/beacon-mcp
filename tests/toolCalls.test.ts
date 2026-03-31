@@ -108,18 +108,24 @@ test("get_morning_brief tool returns aggregated content", async () => {
 
     if (
       url.hostname === "gmail.googleapis.com" &&
-      url.pathname === "/gmail/v1/users/me/messages" &&
-      url.searchParams.get("q") === "is:unread"
+      url.pathname === "/gmail/v1/users/me/labels/UNREAD"
     ) {
-      return jsonResponse({ resultSizeEstimate: 3 });
+      return jsonResponse({
+        id: "UNREAD",
+        name: "UNREAD",
+        messagesUnread: 3,
+      });
     }
 
     if (
       url.hostname === "gmail.googleapis.com" &&
-      url.pathname === "/gmail/v1/users/me/messages" &&
-      url.searchParams.get("q") === "is:unread label:important"
+      url.pathname === "/gmail/v1/users/me/labels/IMPORTANT"
     ) {
-      return jsonResponse({ resultSizeEstimate: 1 });
+      return jsonResponse({
+        id: "IMPORTANT",
+        name: "IMPORTANT",
+        messagesUnread: 1,
+      });
     }
 
     if (url.hostname === "www.googleapis.com") {
@@ -316,20 +322,24 @@ test("get_emails tool returns the same email payload as get_morning_brief", asyn
 
     if (
       url.hostname === "gmail.googleapis.com" &&
-      url.pathname === "/gmail/v1/users/me/messages" &&
-      url.searchParams.get("maxResults") === "1" &&
-      url.searchParams.get("q") === "is:unread"
+      url.pathname === "/gmail/v1/users/me/labels/UNREAD"
     ) {
-      return jsonResponse({ resultSizeEstimate: 3 });
+      return jsonResponse({
+        id: "UNREAD",
+        name: "UNREAD",
+        messagesUnread: 3,
+      });
     }
 
     if (
       url.hostname === "gmail.googleapis.com" &&
-      url.pathname === "/gmail/v1/users/me/messages" &&
-      url.searchParams.get("maxResults") === "1" &&
-      url.searchParams.get("q") === "is:unread label:important"
+      url.pathname === "/gmail/v1/users/me/labels/IMPORTANT"
     ) {
-      return jsonResponse({ resultSizeEstimate: 1 });
+      return jsonResponse({
+        id: "IMPORTANT",
+        name: "IMPORTANT",
+        messagesUnread: 1,
+      });
     }
 
     if (url.hostname === "www.googleapis.com") {

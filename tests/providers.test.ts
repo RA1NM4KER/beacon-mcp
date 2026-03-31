@@ -225,20 +225,24 @@ test("fetchEmails normalizes Gmail list and message results", async () => {
 
     if (
       url.hostname === "gmail.googleapis.com" &&
-      url.pathname === "/gmail/v1/users/me/messages" &&
-      url.searchParams.get("maxResults") === "1" &&
-      url.searchParams.get("q") === "is:unread"
+      url.pathname === "/gmail/v1/users/me/labels/UNREAD"
     ) {
-      return jsonResponse({ resultSizeEstimate: 12 });
+      return jsonResponse({
+        id: "UNREAD",
+        name: "UNREAD",
+        messagesUnread: 12,
+      });
     }
 
     if (
       url.hostname === "gmail.googleapis.com" &&
-      url.pathname === "/gmail/v1/users/me/messages" &&
-      url.searchParams.get("maxResults") === "1" &&
-      url.searchParams.get("q") === "is:unread label:important"
+      url.pathname === "/gmail/v1/users/me/labels/IMPORTANT"
     ) {
-      return jsonResponse({ resultSizeEstimate: 4 });
+      return jsonResponse({
+        id: "IMPORTANT",
+        name: "IMPORTANT",
+        messagesUnread: 4,
+      });
     }
 
     if (
@@ -266,7 +270,7 @@ test("fetchEmails normalizes Gmail list and message results", async () => {
   const result = await fetchEmails({ unreadOnly: true, maxResults: 5 });
 
   assert.equal(result.query, "is:unread");
-  assert.equal(result.count, 7);
+  assert.equal(result.count, 12);
   assert.equal(result.unreadCount, 12);
   assert.equal(result.importantCount, 4);
   assert.deepEqual(result.emails[0], {
